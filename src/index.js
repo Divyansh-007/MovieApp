@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -8,9 +8,9 @@ import App from './components/App';
 import rootReducer from './reducers/index';
 
 // curried version of logger in arrow function form
-const logger = ({dispatch, getState}) => (next) => (action) => {
-  if(typeof action !== 'function'){
-    console.log('ACTION_TYPE: ',action.type);  
+const logger = ({ dispatch, getState }) => (next) => (action) => {
+  if (typeof action !== 'function') {
+    console.log('ACTION_TYPE: ', action.type);
   }
   next(action);
 }
@@ -35,7 +35,7 @@ const logger = ({dispatch, getState}) => (next) => (action) => {
 //   next(action);
 // };
 
-const store = createStore(rootReducer,applyMiddleware(logger,thunk));
+const store = createStore(rootReducer, applyMiddleware(logger, thunk));
 // console.log('store',store);
 // console.log('Before State',store.getState());
 
@@ -46,10 +46,29 @@ const store = createStore(rootReducer,applyMiddleware(logger,thunk));
 
 // console.log('After State',store.getState());
 
+export const StoreContext = createContext();
+
+class Provider extends React.Component {
+  render() {
+    const { store } = this.props;
+    return <StoreContext.Provider value={store}>
+      {this.props.children}
+    </StoreContext.Provider>
+  }
+}
+
+// changed due to context creation
 ReactDOM.render(
-  <React.StrictMode>
-    <App store = {store} />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <Provider store={store}>
+    <React.StrictMode>
+      <App/>
+    </React.StrictMode>
+  </Provider>, document.getElementById('root')
 );
 
+
+// ReactDOM.render(
+//     <React.StrictMode>
+//       <App store={store}/>
+//     </React.StrictMode>, document.getElementById('root')
+// );
