@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { ADD_MOVIES, ADD_FAVOURITE, REMOVE_FAVOURITE, SHOW_FAVOURITES } from '../actions'
+import { ADD_MOVIES, ADD_FAVOURITE, REMOVE_FAVOURITE, SHOW_FAVOURITES, ADD_MOVIE_TO_LIST, ADD_SEARCH_RESULT } from '../actions'
 
 const initialMovieState = {
     all_movies: [],
@@ -7,7 +7,7 @@ const initialMovieState = {
     showFavourites: false
 }
 
-export function movies(state = initialMovieState, action){
+export function movies(state = initialMovieState, action) {
     switch (action.type) {
         case ADD_MOVIES:
             return {
@@ -16,21 +16,26 @@ export function movies(state = initialMovieState, action){
 
 
             }
-        case ADD_FAVOURITE: 
-            return{
+        case ADD_FAVOURITE:
+            return {
                 ...state,
                 favourites: [action.movie, ...state.favourites]
             }
         case REMOVE_FAVOURITE:
             const filterArray = state.favourites.filter(movie => movie.Title !== action.movie.Title);
-            return{
+            return {
                 ...state,
                 favourites: filterArray
             }
         case SHOW_FAVOURITES:
-            return{
+            return {
                 ...state,
                 showFavourites: action.value
+            }
+        case ADD_MOVIE_TO_LIST:
+            return {
+                ...state,
+                all_movies: [action.movie, ...state.all_movies],
             }
         default: return state
     }
@@ -46,11 +51,26 @@ export function movies(state = initialMovieState, action){
 }
 
 const initialSearchState = {
-    result: {}
+    result: {},
+    showSearchResults: false
 }
 
-export function search(state = initialSearchState, action){
-    return state;
+export function search(state = initialSearchState, action) {
+    switch (action.type) {
+        case ADD_SEARCH_RESULT:
+          return {
+            ...state,
+            results: action.movie,
+            showSearchResults: true,
+          };
+        case ADD_MOVIE_TO_LIST:
+          return {
+            ...state,
+            showSearchResults: false,
+          };
+        default:
+          return state;
+      }
 }
 
 // const initialRootState = {
